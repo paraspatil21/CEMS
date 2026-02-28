@@ -98,6 +98,36 @@ public class EventDAO {
         }
     }
 
+    // ─── REPORTS ──────────────────────────────────────────────────────────────
+
+    public int getTotalEvents() throws SQLException {
+        String query = "SELECT COUNT(*) FROM events";
+        try (Connection conn = DBConnection.getConnection();
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(query)) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        }
+        return 0;
+    }
+
+    public List<Object[]> getEventWiseRegistrations() throws SQLException {
+        List<Object[]> report = new ArrayList<>();
+        String query = "SELECT e.event_name, COUNT(r.registration_id) as total_regs " +
+                "FROM events e " +
+                "LEFT JOIN registrations r ON e.event_id = r.event_id " +
+                "GROUP BY e.event_name";
+        try (Connection conn = DBConnection.getConnection();
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(query)) {
+            while (rs.next()) {
+                report.add(new Object[] { rs.getString("event_name"), rs.getInt("total_regs") });
+            }
+        }
+        return report;
+    }
+
     // ─── HELPERS ──────────────────────────────────────────────────────────────
 
     private void setEventParams(PreparedStatement stmt, Event event) throws SQLException {

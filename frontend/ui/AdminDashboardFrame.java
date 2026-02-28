@@ -57,9 +57,8 @@ public class AdminDashboardFrame extends JFrame {
         });
 
         manageEventsBtn.addActionListener(e -> new EventManagementFrame().setVisible(true));
-        manageStudentsBtn
-                .addActionListener(e -> JOptionPane.showMessageDialog(this, "Student Management Screen - Coming Soon"));
+        manageStudentsBtn.addActionListener(e -> new StudentManagementFrame().setVisible(true));
         viewRegistrationsBtn.addActionListener(e -> new RegistrationManagementFrame().setVisible(true));
-        reportsBtn.addActionListener(e -> JOptionPane.showMessageDialog(this, "Reports Screen - Coming Soon"));
+        reportsBtn.addActionListener(e -> new ReportsFrame().setVisible(true));
     }
 }

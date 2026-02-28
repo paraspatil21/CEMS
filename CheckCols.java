@@ -1,0 +1,1 @@
+import backend.util.DBConnection; import java.sql.*; public class CheckCols { public static void main(String[] args) throws Exception { Connection conn = DBConnection.getConnection(); DatabaseMetaData meta = conn.getMetaData(); ResultSet rs = meta.getColumns(null, null, "users", null); while(rs.next()) { System.out.println(rs.getString("COLUMN_NAME")); } } }

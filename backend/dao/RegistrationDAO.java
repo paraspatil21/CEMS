@@ -143,4 +143,18 @@ public class RegistrationDAO {
         }
         return -1;
     }
+
+    // ─── REPORTS ──────────────────────────────────────────────────────────────
+
+    public int getTotalRegistrations() throws SQLException {
+        String query = "SELECT COUNT(*) FROM registrations";
+        try (Connection conn = DBConnection.getConnection();
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(query)) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        }
+        return 0;
+    }
 }

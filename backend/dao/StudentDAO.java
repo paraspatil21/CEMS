@@ -62,4 +62,73 @@ public class StudentDAO {
                 rs.getString("contact"),
                 rs.getString("email"));
     }
+
+    public boolean updateStudent(Student student) throws SQLException {
+        String query = "UPDATE students SET name=?, roll_number=?, department=? WHERE student_id=?";
+        try (Connection conn = DBConnection.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, student.getName());
+            stmt.setString(2, student.getRollNumber());
+            stmt.setString(3, student.getDepartment());
+            stmt.setInt(4, student.getStudentId());
+            int rowsUpdated = stmt.executeUpdate();
+            return rowsUpdated > 0;
+        }
+    }
+
+    public boolean deleteStudent(int studentId) throws SQLException {
+        // Because of ON DELETE CASCADE, deleting the user deletes the student
+        // automatically.
+        // First find the user_id for this student
+        String findUserQuery = "SELECT user_id FROM students WHERE student_id=?";
+        int userId = -1;
+        try (Connection conn = DBConnection.getConnection();
+                PreparedStatement stmt1 = conn.prepareStatement(findUserQuery)) {
+            stmt1.setInt(1, studentId);
+            try (ResultSet rs = stmt1.executeQuery()) {
+                if (rs.next()) {
+                    userId = rs.getInt("user_id");
+                }
+            }
+
+            if (userId != -1) {
+                String deleteQuery = "DELETE FROM users WHERE user_id=?";
+                try (PreparedStatement stmt2 = conn.prepareStatement(deleteQuery)) {
+                    stmt2.setInt(1, userId);
+                    int rowsDeleted = stmt2.executeUpdate();
+                    return rowsDeleted > 0;
+                }
+            }
+            return false;
+        }
+    }
+
+    public List<Student> searchStudents(String keyword) throws SQLException {
+        List<Student> list = new ArrayList<>();
+        String query = "SELECT * FROM students WHERE name LIKE ? OR roll_number LIKE ? ORDER BY name";
+        try (Connection conn = DBConnection.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
+            String searchPattern = "%" + keyword + "%";
+            stmt.setString(1, searchPattern);
+            stmt.setString(2, searchPattern);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapRow(rs));
+                }
+            }
+        }
+        return list;
+    }
+
+    public int getTotalStudents() throws SQLException {
+        String query = "SELECT COUNT(*) FROM students";
+        try (Connection conn = DBConnection.getConnection();
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(query)) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        }
+        return 0;
+    }
 }
