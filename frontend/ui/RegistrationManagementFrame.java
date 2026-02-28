@@ -17,7 +17,8 @@ public class RegistrationManagementFrame extends JFrame {
 
     public RegistrationManagementFrame() {
         setTitle("Registration Management");
-        setSize(800, 500);
+        setMinimumSize(new java.awt.Dimension(1024, 600));
+        setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());

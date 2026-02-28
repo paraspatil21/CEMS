@@ -8,7 +8,8 @@ public class AdminDashboardFrame extends JFrame {
 
     public AdminDashboardFrame() {
         setTitle("Admin Dashboard");
-        setSize(600, 450);
+        setMinimumSize(new java.awt.Dimension(1024, 600));
+        setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());

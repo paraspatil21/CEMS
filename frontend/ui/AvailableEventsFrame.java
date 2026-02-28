@@ -30,7 +30,8 @@ public class AvailableEventsFrame extends JFrame {
         }
 
         setTitle("Available Events");
-        setSize(800, 500);
+        setMinimumSize(new java.awt.Dimension(1024, 600));
+        setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());

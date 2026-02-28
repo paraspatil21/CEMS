@@ -28,7 +28,8 @@ public class EventFormFrame extends JFrame {
 
         boolean isUpdate = (existingEvent != null);
         setTitle(isUpdate ? "Update Event" : "Add New Event");
-        setSize(480, 520);
+        setMinimumSize(new java.awt.Dimension(1024, 600));
+        setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 

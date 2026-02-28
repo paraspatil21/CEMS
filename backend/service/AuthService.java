@@ -12,6 +12,10 @@ public class AuthService {
     private final UserDAO userDAO = new UserDAO();
     private final StudentDAO studentDAO = new StudentDAO();
 
+    public java.util.List<String> getAllUsernames() throws SQLException {
+        return userDAO.getAllUsernames();
+    }
+
     public User login(String username, String password) throws SQLException {
         return userDAO.login(username, password);
     }

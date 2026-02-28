@@ -3,6 +3,8 @@ package backend.dao;
 import backend.model.User;
 import backend.util.DBConnection;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserDAO {
 
@@ -40,5 +42,18 @@ public class UserDAO {
             }
         }
         return -1;
+    }
+
+    public List<String> getAllUsernames() throws SQLException {
+        List<String> usernames = new ArrayList<>();
+        String query = "SELECT username FROM users ORDER BY role DESC, username ASC";
+        try (Connection conn = DBConnection.getConnection();
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(query)) {
+            while (rs.next()) {
+                usernames.add(rs.getString("username"));
+            }
+        }
+        return usernames;
     }
 }

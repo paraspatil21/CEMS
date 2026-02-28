@@ -12,7 +12,8 @@ public class StudentDashboardFrame extends JFrame {
     public StudentDashboardFrame(User user) {
         this.currentUser = user;
         setTitle("Student Dashboard");
-        setSize(600, 400);
+        setMinimumSize(new java.awt.Dimension(1024, 600));
+        setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());

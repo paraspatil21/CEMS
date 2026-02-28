@@ -27,7 +27,8 @@ public class MyRegistrationsFrame extends JFrame {
         }
 
         setTitle("My Registrations");
-        setSize(700, 400);
+        setMinimumSize(new java.awt.Dimension(1024, 600));
+        setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());

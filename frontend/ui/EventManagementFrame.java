@@ -21,7 +21,8 @@ public class EventManagementFrame extends JFrame {
 
     public EventManagementFrame() {
         setTitle("Event Management");
-        setSize(800, 600);
+        setMinimumSize(new java.awt.Dimension(1024, 600));
+        setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());

@@ -23,7 +23,8 @@ public class ReportsFrame extends JFrame {
     public ReportsFrame() {
         this.reportsService = new ReportsService();
         setTitle("System Reports");
-        setSize(800, 500);
+        setMinimumSize(new java.awt.Dimension(1024, 600));
+        setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLayout(new BorderLayout());

@@ -9,37 +9,52 @@ import java.sql.SQLException;
 
 public class LoginFrame extends JFrame {
 
-    private JTextField usernameField;
+    private JComboBox<String> usernameCombo;
     private JPasswordField passwordField;
     private JComboBox<String> roleCombo;
     private final AuthService authService = new AuthService();
 
     public LoginFrame() {
-        setTitle("Login");
-        setSize(400, 300);
+        setTitle("CEMS - Login");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setMinimumSize(new Dimension(1024, 600));
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
         setLocationRelativeTo(null);
-        setLayout(new BorderLayout());
+        setLayout(new GridBagLayout());
+
+        JPanel mainPanel = new JPanel(new BorderLayout(20, 20));
+        mainPanel.setBorder(new EmptyBorder(40, 40, 40, 40));
+        mainPanel.setBackground(Color.WHITE);
 
         // Header
-        JLabel titleLabel = new JLabel("Login", SwingConstants.CENTER);
-        titleLabel.setFont(titleLabel.getFont().deriveFont(Font.BOLD, 18f));
-        titleLabel.setBorder(new EmptyBorder(20, 0, 10, 0));
-        add(titleLabel, BorderLayout.NORTH);
+        JLabel titleLabel = new JLabel("College Event Management System", SwingConstants.CENTER);
+        titleLabel.setFont(titleLabel.getFont().deriveFont(Font.BOLD, 24f));
+        titleLabel.setBorder(new EmptyBorder(20, 0, 20, 0));
+        mainPanel.add(titleLabel, BorderLayout.NORTH);
 
         // Form
-        JPanel formPanel = new JPanel(new GridLayout(4, 2, 10, 10));
-        formPanel.setBorder(new EmptyBorder(10, 40, 10, 40));
+        JPanel formPanel = new JPanel(new GridLayout(4, 2, 15, 15));
+        formPanel.setBorder(new EmptyBorder(20, 60, 20, 60));
+        formPanel.setBackground(Color.WHITE);
 
-        usernameField = new JTextField();
+        usernameCombo = new JComboBox<>();
+        try {
+            java.util.List<String> usernames = authService.getAllUsernames();
+            for (String u : usernames) {
+                usernameCombo.addItem(u);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
         passwordField = new JPasswordField();
-        roleCombo = new JComboBox<>(new String[] { "ADMIN", "STUDENT" });
+        roleCombo = new JComboBox<>(new String[] { "STUDENT", "ADMIN" });
 
-        formPanel.add(new JLabel("Username"));
-        formPanel.add(usernameField);
-        formPanel.add(new JLabel("Password"));
+        formPanel.add(new JLabel("Select User:"));
+        formPanel.add(usernameCombo);
+        formPanel.add(new JLabel("Password:"));
         formPanel.add(passwordField);
-        formPanel.add(new JLabel("Role"));
+        formPanel.add(new JLabel("Role:"));
         formPanel.add(roleCombo);
 
         JButton loginButton = new JButton("Login");
@@ -50,13 +65,15 @@ public class LoginFrame extends JFrame {
         formPanel.add(loginButton);
         formPanel.add(exitButton);
 
-        add(formPanel, BorderLayout.CENTER);
+        mainPanel.add(formPanel, BorderLayout.CENTER);
 
         // Status Label for Errors
         JLabel statusLabel = new JLabel(" ", SwingConstants.CENTER);
         statusLabel.setForeground(Color.RED);
         statusLabel.setBorder(new EmptyBorder(0, 0, 10, 0));
-        add(statusLabel, BorderLayout.SOUTH);
+        mainPanel.add(statusLabel, BorderLayout.SOUTH);
+
+        add(mainPanel);
 
         // Listeners
         loginButton.addActionListener(e -> handleLogin(statusLabel));
@@ -71,7 +88,9 @@ public class LoginFrame extends JFrame {
     }
 
     private void handleLogin(JLabel statusLabel) {
-        String username = usernameField.getText().trim();
+        String username = (String) usernameCombo.getSelectedItem();
+        if (username == null)
+            username = "";
         String password = new String(passwordField.getPassword());
         String selectedRole = (String) roleCombo.getSelectedItem();
 
