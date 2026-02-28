@@ -1,0 +1,106 @@
+package frontend.ui;
+
+import backend.model.User;
+import backend.service.AuthService;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
+import java.sql.SQLException;
+
+public class LoginFrame extends JFrame {
+
+    private JTextField usernameField;
+    private JPasswordField passwordField;
+    private JComboBox<String> roleCombo;
+    private final AuthService authService = new AuthService();
+
+    public LoginFrame() {
+        setTitle("Login");
+        setSize(400, 300);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setLayout(new BorderLayout());
+
+        // Header
+        JLabel titleLabel = new JLabel("Login", SwingConstants.CENTER);
+        titleLabel.setFont(titleLabel.getFont().deriveFont(Font.BOLD, 18f));
+        titleLabel.setBorder(new EmptyBorder(20, 0, 10, 0));
+        add(titleLabel, BorderLayout.NORTH);
+
+        // Form
+        JPanel formPanel = new JPanel(new GridLayout(4, 2, 10, 10));
+        formPanel.setBorder(new EmptyBorder(10, 40, 10, 40));
+
+        usernameField = new JTextField();
+        passwordField = new JPasswordField();
+        roleCombo = new JComboBox<>(new String[] { "ADMIN", "STUDENT" });
+
+        formPanel.add(new JLabel("Username"));
+        formPanel.add(usernameField);
+        formPanel.add(new JLabel("Password"));
+        formPanel.add(passwordField);
+        formPanel.add(new JLabel("Role"));
+        formPanel.add(roleCombo);
+
+        JButton loginButton = new JButton("Login");
+        loginButton.setForeground(Color.BLUE);
+        JButton exitButton = new JButton("Exit");
+        exitButton.setForeground(Color.RED);
+
+        formPanel.add(loginButton);
+        formPanel.add(exitButton);
+
+        add(formPanel, BorderLayout.CENTER);
+
+        // Status Label for Errors
+        JLabel statusLabel = new JLabel(" ", SwingConstants.CENTER);
+        statusLabel.setForeground(Color.RED);
+        statusLabel.setBorder(new EmptyBorder(0, 0, 10, 0));
+        add(statusLabel, BorderLayout.SOUTH);
+
+        // Listeners
+        loginButton.addActionListener(e -> handleLogin(statusLabel));
+        exitButton.addActionListener(e -> System.exit(0));
+
+        // Allow register link or similar if needed, but per request we are keeping it
+        // minimalist.
+        // If the user wants to register, we should probably have a button or link.
+        // Let's add a small link at the bottom or another button.
+        // Actually, the request says "Functional-only UI" and lists specific buttons.
+        // I will stick to the listed buttons: Login, Exit.
+    }
+
+    private void handleLogin(JLabel statusLabel) {
+        String username = usernameField.getText().trim();
+        String password = new String(passwordField.getPassword());
+        String selectedRole = (String) roleCombo.getSelectedItem();
+
+        if (username.isEmpty() || password.isEmpty()) {
+            statusLabel.setText("Username and password required");
+            return;
+        }
+
+        try {
+            User user = authService.login(username, password);
+            if (user != null) {
+                if (!user.getRole().equalsIgnoreCase(selectedRole)) {
+                    statusLabel.setText("Invalid role selected");
+                    return;
+                }
+
+                statusLabel.setText(" ");
+                if ("ADMIN".equals(user.getRole())) {
+                    new AdminDashboardFrame().setVisible(true);
+                } else {
+                    new StudentDashboardFrame(user).setVisible(true);
+                }
+                dispose();
+            } else {
+                statusLabel.setText("Invalid credentials");
+            }
+        } catch (SQLException ex) {
+            statusLabel.setText("Database error");
+            ex.printStackTrace();
+        }
+    }
+}
