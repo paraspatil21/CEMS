@@ -54,8 +54,8 @@ public class RegistrationManagementFrame extends JFrame {
         // Listeners
         backBtn.addActionListener(e -> dispose());
         refreshBtn.addActionListener(e -> refreshTable());
-        approveBtn.addActionListener(e -> updateStatus("APPROVED"));
-        rejectBtn.addActionListener(e -> updateStatus("REJECTED"));
+        approveBtn.addActionListener(e -> approveStatus());
+        rejectBtn.addActionListener(e -> rejectStatus());
 
         refreshTable();
     }
@@ -78,14 +78,28 @@ public class RegistrationManagementFrame extends JFrame {
         }
     }
 
-    private void updateStatus(String status) {
+    private void approveStatus() {
         int row = regTable.getSelectedRow();
         if (row == -1)
             return;
         int id = (int) tableModel.getValueAt(row, 0);
         try {
-            regService.updateApprovalStatus(id, status);
-            JOptionPane.showMessageDialog(this, "Status updated to " + status);
+            regService.approveRegistration(id);
+            JOptionPane.showMessageDialog(this, "Status updated to APPROVED");
+            refreshTable();
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+        }
+    }
+
+    private void rejectStatus() {
+        int row = regTable.getSelectedRow();
+        if (row == -1)
+            return;
+        int id = (int) tableModel.getValueAt(row, 0);
+        try {
+            regService.rejectRegistration(id);
+            JOptionPane.showMessageDialog(this, "Status updated to REJECTED");
             refreshTable();
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());

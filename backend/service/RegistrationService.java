@@ -19,8 +19,8 @@ public class RegistrationService {
      * 1. Lock event row (FOR UPDATE)
      * 2. Check duplicate
      * 3. Check capacity
-     * 4. Insert registration
-     * 5. Increment registered_count
+     * 4. Insert registration (status PENDING)
+     * Commit or Rollback.
      * Commit or Rollback.
      */
     public boolean registerForEvent(int studentId, int eventId) throws SQLException {
@@ -46,11 +46,8 @@ public class RegistrationService {
                 throw new SQLException("Event is full. No slots available.");
             }
 
-            // 3. Insert registration
+            // 3. Insert registration (PENDING by default in DAO)
             registrationDAO.registerStudent(conn, studentId, eventId);
-
-            // 4. Increment registered_count
-            eventDAO.updateRegisteredCount(conn, eventId, 1);
 
             conn.commit();
             return true;
@@ -174,5 +171,70 @@ public class RegistrationService {
 
     public void updateApprovalStatus(int registrationId, String status) throws SQLException {
         registrationDAO.updateApprovalStatus(registrationId, status);
+    }
+
+    public boolean approveRegistration(int registrationId) throws SQLException {
+        Connection conn = null;
+        try {
+            conn = DBConnection.getConnection();
+            conn.setAutoCommit(false);
+
+            int eventId = registrationDAO.getEventIdByRegistration(registrationId);
+            if (eventId == -1) {
+                conn.rollback();
+                throw new SQLException("Registration not found.");
+            }
+
+            registrationDAO.updateApprovalStatus(conn, registrationId, "APPROVED");
+            eventDAO.updateRegisteredCount(conn, eventId, 1);
+
+            conn.commit();
+            return true;
+        } catch (SQLException e) {
+            if (conn != null) {
+                try {
+                    conn.rollback();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
+            throw e;
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public boolean rejectRegistration(int registrationId) throws SQLException {
+        Connection conn = null;
+        try {
+            conn = DBConnection.getConnection();
+            conn.setAutoCommit(false);
+            registrationDAO.updateApprovalStatus(conn, registrationId, "REJECTED");
+            conn.commit();
+            return true;
+        } catch (SQLException e) {
+            if (conn != null) {
+                try {
+                    conn.rollback();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
+            throw e;
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
     }
 }

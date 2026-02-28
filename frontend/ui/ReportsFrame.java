@@ -19,6 +19,8 @@ public class ReportsFrame extends JFrame {
     private final JLabel lblTotalStudents;
     private final JLabel lblTotalEvents;
     private final JLabel lblTotalRegistrations;
+    private final JLabel lblPendingRequests;
+    private final JLabel lblApprovedCount;
 
     public ReportsFrame() {
         this.reportsService = new ReportsService();
@@ -36,16 +38,21 @@ public class ReportsFrame extends JFrame {
         titleLabel.setBorder(new EmptyBorder(10, 0, 10, 0));
         topPanel.add(titleLabel, BorderLayout.NORTH);
 
-        JPanel summaryPanel = new JPanel(new GridLayout(1, 3, 20, 20));
+        JPanel summaryPanel = new JPanel(new GridLayout(2, 3, 20, 20));
         summaryPanel.setBorder(new EmptyBorder(10, 20, 20, 20));
 
         lblTotalStudents = createSummaryLabel("Total Students: 0");
         lblTotalEvents = createSummaryLabel("Total Events: 0");
         lblTotalRegistrations = createSummaryLabel("Total Registrations: 0");
+        lblPendingRequests = createSummaryLabel("Pending Requests: 0");
+        lblApprovedCount = createSummaryLabel("Approved Count: 0");
 
         summaryPanel.add(lblTotalStudents);
         summaryPanel.add(lblTotalEvents);
         summaryPanel.add(lblTotalRegistrations);
+        summaryPanel.add(lblPendingRequests);
+        summaryPanel.add(lblApprovedCount);
+        summaryPanel.add(new JLabel("")); // Filler
 
         topPanel.add(summaryPanel, BorderLayout.SOUTH);
         add(topPanel, BorderLayout.NORTH);
@@ -104,10 +111,14 @@ public class ReportsFrame extends JFrame {
             int ts = reportsService.getTotalStudents();
             int te = reportsService.getTotalEvents();
             int tr = reportsService.getTotalRegistrations();
+            int pending = reportsService.getPendingRequestsCount();
+            int approved = reportsService.getApprovedCount();
 
             lblTotalStudents.setText("Total Students: " + ts);
             lblTotalEvents.setText("Total Events: " + te);
             lblTotalRegistrations.setText("Total Registrations: " + tr);
+            lblPendingRequests.setText("Pending Requests: " + pending);
+            lblApprovedCount.setText("Approved Count: " + approved);
 
             List<Object[]> eventReport = reportsService.getEventWiseReport();
             tableModel.setRowCount(0);
@@ -136,7 +147,6 @@ public class ReportsFrame extends JFrame {
                     String eventName = tableModel.getValueAt(i, 0).toString();
                     String rCount = tableModel.getValueAt(i, 1).toString();
 
-                    // escape comma
                     if (eventName.contains(",")) {
                         eventName = "\"" + eventName + "\"";
                     }

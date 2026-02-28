@@ -116,7 +116,8 @@ public class EventDAO {
         List<Object[]> report = new ArrayList<>();
         String query = "SELECT e.event_name, COUNT(r.registration_id) as total_regs " +
                 "FROM events e " +
-                "LEFT JOIN registrations r ON e.event_id = r.event_id " +
+                "JOIN registrations r ON e.event_id = r.event_id " +
+                "WHERE r.status = 'APPROVED' " +
                 "GROUP BY e.event_name";
         try (Connection conn = DBConnection.getConnection();
                 Statement stmt = conn.createStatement();

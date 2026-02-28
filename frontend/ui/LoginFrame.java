@@ -9,7 +9,7 @@ import java.sql.SQLException;
 
 public class LoginFrame extends JFrame {
 
-    private JComboBox<String> usernameCombo;
+    private JTextField usernameField;
     private JPasswordField passwordField;
     private JComboBox<String> roleCombo;
     private final AuthService authService = new AuthService();
@@ -37,21 +37,12 @@ public class LoginFrame extends JFrame {
         formPanel.setBorder(new EmptyBorder(20, 60, 20, 60));
         formPanel.setBackground(Color.WHITE);
 
-        usernameCombo = new JComboBox<>();
-        try {
-            java.util.List<String> usernames = authService.getAllUsernames();
-            for (String u : usernames) {
-                usernameCombo.addItem(u);
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-
+        usernameField = new JTextField();
         passwordField = new JPasswordField();
         roleCombo = new JComboBox<>(new String[] { "STUDENT", "ADMIN" });
 
-        formPanel.add(new JLabel("Select User:"));
-        formPanel.add(usernameCombo);
+        formPanel.add(new JLabel("Username:"));
+        formPanel.add(usernameField);
         formPanel.add(new JLabel("Password:"));
         formPanel.add(passwordField);
         formPanel.add(new JLabel("Role:"));
@@ -88,9 +79,7 @@ public class LoginFrame extends JFrame {
     }
 
     private void handleLogin(JLabel statusLabel) {
-        String username = (String) usernameCombo.getSelectedItem();
-        if (username == null)
-            username = "";
+        String username = usernameField.getText().trim();
         String password = new String(passwordField.getPassword());
         String selectedRole = (String) roleCombo.getSelectedItem();
 

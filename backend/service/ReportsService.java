@@ -33,4 +33,12 @@ public class ReportsService {
     public List<Object[]> getEventWiseReport() throws SQLException {
         return eventDAO.getEventWiseRegistrations();
     }
+
+    public int getPendingRequestsCount() throws SQLException {
+        return registrationDAO.getCountByStatus("PENDING");
+    }
+
+    public int getApprovedCount() throws SQLException {
+        return registrationDAO.getCountByStatus("APPROVED");
+    }
 }
